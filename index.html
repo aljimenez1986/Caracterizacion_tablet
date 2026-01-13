@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generador RGB</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+    }
+
+    #config {
+        text-align: center;
+    }
+
+    input, button {
+        font-size: 1.2em;
+        padding: 10px;
+        margin-top: 10px;
+    }
+
+    #viewer {
+        display: none;
+        width: 100vw;
+        height: 100vh;
+        position: relative;
+    }
+
+    #rgbText {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        font-size: 0.6em;
+        color: white;
+        text-shadow: 1px 1px 2px black;
+        text-align: right;
+        white-space: pre-line;
+    }
+</style>
+
+</head>
+<body>
+
+<div id="config">
+    <p>¿Cuántos niveles quieres?</p>
+    <input type="number" id="levels" min="2" value="10">
+    <br>
+    <button onclick="generate()">Generar</button>
+</div>
+
+<div id="viewer" onclick="nextColor()">
+    <div id="rgbText"></div>
+</div>
+
+<script>
+let colors = [];
+let index = 0;
+
+function generate() {
+    const n = parseInt(document.getElementById("levels").value);
+    if (n < 2) return;
+
+    const step = 255 / (n - 1);
+    const values = [];
+
+    for (let i = 0; i < n; i++) {
+        values.push(Math.ceil(i * step));
+    }
+
+    colors = [];
+
+    for (let r of values) {
+        for (let g of values) {
+            for (let b of values) {
+                colors.push({ r, g, b });
+            }
+        }
+    }
+
+    index = 0;
+    document.getElementById("config").style.display = "none";
+    document.getElementById("viewer").style.display = "block";
+    showColor();
+}
+
+function showColor() {
+    const c = colors[index];
+    document.getElementById("viewer").style.backgroundColor =
+        `rgb(${c.r},${c.g},${c.b})`;
+
+    document.getElementById("rgbText").innerText =
+        `R:${c.r} G:${c.g} B:${c.b}
+${index + 1}/${colors.length}`;
+}
+
+function nextColor() {
+    index++;
+    if (index >= colors.length) index = 0;
+    showColor();
+}
+</script>
+
+</body>
+</html>
